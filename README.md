@@ -5,16 +5,16 @@ PHP Library Validate predetermined rules.
 
 AutoLoad: PSR-0.
 Example:
-
+[code]
 spl_autoload_register('load');
 function load($className)
 {
     if( file_exists( ( $filePath = str_replace('\\', DIRECTORY_SEPARATOR, $className) . '.php') ) )
         require_once ( $filePath );
 }
-
+[/code]
 How usage:
-
+[code]
 $validate = new Validate\Validate();
 $validate->addField('name', 'Felipe Barros')
 			->addRule('required')
@@ -38,5 +38,6 @@ echo "<p>Number of sucess: {$validate->get_success()}</p>";
 echo '<p>Error messages: ';
 var_dump($validate->get_errors_msg());
 echo '</p>';
+[/code]
 
 Customize error messages: Edit the constants in the file RulesErrorMessage. 
