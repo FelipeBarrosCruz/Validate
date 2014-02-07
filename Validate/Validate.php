@@ -9,17 +9,18 @@
 
 namespace Validate;
 
-class Validate
+class Validate implements IValidate
 {
 	private $status = TRUE;
 	private $tests 	= 0;
 	private $errors = 0;
 	private $errors_msg = array();
+	private $field;
 	private $fields 	= array();
 
 	public function addField($name, $value)
 	{
-		$this->name = $name;
+		$this->field = $name;
 		$this->fields[$name] = new namespace\Rules($name, $value);
 		
 		return $this;
@@ -39,23 +40,26 @@ class Validate
 
 	private function processTest($method, $params)
 	{
-		if( !empty($params) )
-			call_user_func_array( array($this->fields[$this->name], $method), $params[0] );
-		else
-			$this->fields[$this->name]->$method();
+		try
+		{
+			if( !empty($params) )
+				call_user_func_array( array($this->fields[$this->field], $method), $params[0] );
+			else
+				$this->fields[$this->field]->$method();
 
-		$this->tests++;
+			$this->tests++;
+		}
+		catch(Exception $error)
+		{
+			echo $error->getMessage();
+		}
 	}
 
 	private function setErrors()
 	{
 		if( !empty($this->fields) )
-		{
 			foreach($this->fields as $field => $fieldRules)
 				$this->errors += $fieldRules->getErrors();
-		}
-
-		return $this->errors;
 	}
 
 	private function setErrorsMsg()

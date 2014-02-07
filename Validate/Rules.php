@@ -8,7 +8,7 @@
 */
 namespace Validate;
 
-class Rules
+class Rules implements IRules
 {
 	private $field;
 	private $value;
@@ -24,42 +24,24 @@ class Rules
 	public function required()
 	{
 		if(empty($this->value))
-		{
-			$this->errors++;
-			$this->addErrorMsg($this->field, namespace\RulesErrorMessage::REQUIRED);
-		}
-
-		return $this;
+			$this->addError($this->field, namespace\RulesErrorMessage::REQUIRED);
 	}
 
 	public function match_value($compare, $flag = FALSE)
 	{
 		if($flag === TRUE)
 			if($this->value !== $compare)
-			{
-				$this->errors++;
-				$this->addErrorMsg($this->field, namespace\RulesErrorMessage::MATCH_VALUE_ONE);
-			}
+				$this->addError($this->field, namespace\RulesErrorMessage::MATCH_VALUE_ONE);
 
 		if($flag === FALSE)
 			if($this->value != $compare)
-			{
-				$this->errors++;
-				$this->addErrorMsg($this->field, namespace\RulesErrorMessage::MATCH_VALUE_TWO);
-			}
-
-		return $this;
+				$this->addError($this->field, namespace\RulesErrorMessage::MATCH_VALUE_TWO);
 	}
 
 	public function match_pattern($pattern)
 	{
 		if( !preg_match($pattern, $this->value) )
-		{
-			$this->errors++;
-			$this->addErrorMsg($this->field, namespace\RulesErrorMessage::MATCH_PATTERN);
-		}
-
-		return $this;
+			$this->addError($this->field, namespace\RulesErrorMessage::MATCH_PATTERN);
 	}
 
 	public function getErrors()
@@ -72,8 +54,9 @@ class Rules
 		return $this->msg_errors;
 	}
 	
-	private function addErrorMsg($field, $msg)
+	private function addError($field, $message)
 	{
-		array_push($this->msg_errors, "The field {$field} {$msg}");
+		$this->errors++;
+		array_push($this->msg_errors, "The field {$field} {$message}");
 	}
 }
